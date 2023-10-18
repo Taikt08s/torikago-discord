@@ -1,5 +1,6 @@
 import { ChatHeader } from "@/components/chat/chat-header";
-import { getOrCreateConverstation } from "@/lib/conversation";
+import { ChatInput } from "@/components/chat/chat-input";
+import { getOrCreateConversation } from "@/lib/conversation";
 import { currentProfile } from "@/lib/current-profile";
 import { db } from "@/lib/db";
 import { redirectToSignIn } from "@clerk/nextjs";
@@ -34,7 +35,7 @@ const MemberIdPage = async ({
         return redirect("/");
     }
 
-    const conversation = await getOrCreateConverstation(currentMember.id, params.memberId);
+    const conversation = await getOrCreateConversation(currentMember.id, params.memberId);
     if (!conversation) {
         return redirect(`/servers/${params.serverId}`);
     }
@@ -43,13 +44,14 @@ const MemberIdPage = async ({
     const otherMember = memberOne.profileId === profile.id ? memberTwo : memberOne;
 
     return (
-        <div className="bg-white dark:bg-[#313338] flex flex-col
-        h-full">
-            <ChatHeader
-                imageUrl={otherMember.profile.imageUrl}
+        <div className="bg-white dark:bg-[#313338] flex flex-col h-full">
+            <ChatInput
                 name={otherMember.profile.name}
-                serverId={params.serverId}
-                type="conversation" />
+                type="conversation"
+                apiUrl="/api/socket/direct-messages"
+                query={{
+                    conversationId: conversation.id,
+                }} />
         </div>
     );
 }

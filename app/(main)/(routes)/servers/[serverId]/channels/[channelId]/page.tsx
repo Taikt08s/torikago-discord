@@ -1,18 +1,22 @@
-import { ChatHeader } from "@/components/chat/chat-header";
-import { currentProfile } from "@/lib/current-profile";
-import { db } from "@/lib/db";
 import { redirectToSignIn } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
+import { ChannelType } from "@prisma/client";
+
+import { currentProfile } from "@/lib/current-profile";
+import { ChatHeader } from "@/components/chat/chat-header";
+import { ChatInput } from "@/components/chat/chat-input";
+import { db } from "@/lib/db";
 
 interface ChannelIdPageProps {
     params: {
         serverId: string;
         channelId: string;
     }
-};
+}
 
-
-const channelIdPage = async ({ params }: ChannelIdPageProps) => {
+const ChannelIdPage = async ({
+    params
+}: ChannelIdPageProps) => {
     const profile = await currentProfile();
 
     if (!profile) {
@@ -37,14 +41,25 @@ const channelIdPage = async ({ params }: ChannelIdPageProps) => {
     }
 
     return (
-        <div className="bg-white dark:bg-[#313338] flex flex-col
+        <div className="bg-white dark:bg-[#313338] flex flex-col 
         h-full">
             <ChatHeader
-                serverId={channel.serverId}
                 name={channel.name}
-                type="channel" />
+                serverId={channel.serverId}
+                type="channel"
+            />
+            <div className="flex-1">Chat here</div>
+            <ChatInput
+                name={channel.name}
+                type="channel"
+                apiUrl="/api/socket/messages"
+                query={{
+                    channelId: channel.id,
+                    serverId: channel.serverId,
+                }}
+            />
         </div>
     );
 }
 
-export default channelIdPage;
+export default ChannelIdPage;
