@@ -15,7 +15,7 @@ export const ourFileRouter = {
     })
         .middleware(() => handleAuth())
         .onUploadComplete(() => { }),
-    messageFile: f(["image", "pdf", "video/h264", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"])
+    messageFile: f(["image", "pdf", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"])
         .middleware(() => handleAuth())
         .onUploadComplete(() => { })
 } satisfies FileRouter;
